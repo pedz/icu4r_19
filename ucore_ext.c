@@ -24,8 +24,8 @@ VALUE icu_ustr_from_array(obj)
 	int32_t		len, capa;
 	UErrorCode	status = U_ZERO_ERROR;
 
-	n = RARRAY(obj)->len;
-	p = RARRAY(obj)->ptr;
+	n = RARRAY_LEN(obj);
+	p = RARRAY_PTR(obj);
 	
 	src = ALLOC_N(UChar32, n);
 	pos = src;
@@ -92,14 +92,14 @@ icu_from_rstr(argc, argv, str)
     UConverter * conv;
     if (rb_scan_args(argc, argv, "01", &enc) == 1) {
 	Check_Type(enc, T_STRING);
-	encoding = RSTRING(enc)->ptr;
+	encoding = RSTRING_PTR(enc);
     } 
-    capa = RSTRING(str)->len + 1;
+    capa = RSTRING_LEN(str) + 1;
     buf = ALLOC_N(UChar, capa);
 
     if(! encoding || !strncmp(encoding, "utf8", 4) ) {
       /* from UTF8 */
-        u_strFromUTF8(buf, capa-1, &len, RSTRING(str)->ptr, RSTRING(str)->len, &error);
+        u_strFromUTF8(buf, capa-1, &len, RSTRING_PTR(str), RSTRING_LEN(str), &error);
 	if( U_FAILURE(error)) {
 	   free(buf);
 	   rb_raise(rb_eArgError, u_errorName(error));
@@ -111,14 +111,14 @@ icu_from_rstr(argc, argv, str)
               ucnv_close(conv);
               rb_raise(rb_eArgError, u_errorName(error));
           }
-          len =  ucnv_toUChars(conv, buf, capa-1, RSTRING(str)->ptr,
-              	      RSTRING(str)->len, &error);
+          len =  ucnv_toUChars(conv, buf, capa-1, RSTRING_PTR(str),
+              	      RSTRING_LEN(str), &error);
           if (U_BUFFER_OVERFLOW_ERROR == error) {
 	      capa = len+1;
               REALLOC_N(buf, UChar, capa);
               error = 0;
-              len = ucnv_toUChars(conv, buf, capa-1, RSTRING(str)->ptr,
-              	      RSTRING(str)->len, &error);
+              len = ucnv_toUChars(conv, buf, capa-1, RSTRING_PTR(str),
+              	      RSTRING_LEN(str), &error);
               if (U_FAILURE(error)) {
 		  free(buf);
                   rb_raise(rb_eArgError, u_errorName(error));

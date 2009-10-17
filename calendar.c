@@ -65,7 +65,7 @@ VALUE icu4r_cal_country_tz (VALUE obj, VALUE ctry)
 	UChar * name;
 	int32_t len;
 	Check_Type(ctry, T_STRING);
-	zones = ucal_openCountryTimeZones (RSTRING(ctry)->ptr, &status) ;
+	zones = ucal_openCountryTimeZones (RSTRING_PTR(ctry), &status) ;
 	ICU_RAISE(status);
 	ret = rb_ary_new();
 	while( (name = (UChar*)uenum_unext(zones, &len, &status))) {
@@ -185,8 +185,8 @@ VALUE icu4r_cal_init (int argc, VALUE * argv, VALUE self)
 	 }
 	 if( n >= 2) {
 	     Check_Type(loc, T_STRING);
-	     locale = RSTRING(loc)->ptr;
-	     locale_len = RSTRING(loc)->len;
+	     locale = RSTRING_PTR(loc);
+	     locale_len = RSTRING_LEN(loc);
 	 }
 	 if( n >= 3) {
 	     if( Qtrue == cal_type ) {
@@ -204,7 +204,7 @@ int icu4r_get_cal_field_int(VALUE field)
 	VALUE  field_const;
 	field_const = rb_hash_aref(s_calendar_fields, field);
 	if(field_const == Qnil)
-	rb_raise(rb_eArgError, "no  such field %s", rb_obj_as_string(field));
+	    rb_raise(rb_eArgError, "no  such field %s", RSTRING_PTR(rb_obj_as_string(field)));
 	return NUM2INT(field_const);
 }
 
@@ -406,7 +406,7 @@ VALUE icu4r_cal_get_tz (int argc, VALUE * argv, VALUE obj)
 	VALUE loc;
 	if( rb_scan_args(argc, argv, "01", &loc) == 1){
 		Check_Type(loc, T_STRING);
-		locale = RSTRING(loc)->ptr;
+		locale = RSTRING_PTR(loc);
 	}
 	
 	capa = ucal_getTimeZoneDisplayName(UCALENDAR(obj), UCAL_STANDARD, locale, buf, capa, &status);
@@ -425,7 +425,7 @@ int icu4r_get_cal_format_int(VALUE field)
 	VALUE  field_const;
 	field_const = rb_hash_aref(s_calendar_formats, field);
 	if(field_const == Qnil)	{
-		rb_warn("no  such format %s , using default", RSTRING(rb_obj_as_string(field))->ptr);
+		rb_warn("no  such format %s , using default", RSTRING_PTR(rb_obj_as_string(field)));
 		return UDAT_DEFAULT;
 	}
 	return NUM2INT(field_const);
@@ -454,7 +454,7 @@ VALUE icu4r_cal_format(int argc, VALUE * argv, VALUE obj)
 	n = rb_scan_args(argc, argv, "02", &pat, &loc);
 	if( n == 2) {
 		Check_Type(loc, T_STRING);
-		locale = RSTRING(loc)->ptr;
+		locale = RSTRING_PTR(loc);
 	}
 	if (n >= 1 && pat != Qnil) {
 		switch(TYPE(pat)) {
@@ -560,7 +560,7 @@ icu4r_cal_parse( obj, str,  locale, val)
    VALUE 		ret;
    Check_Type(locale, T_STRING);
    Check_Class(val, rb_cUString);
-   cal = icu_date_parse(ICU_PTR(str), ICU_LEN(str), RSTRING(locale)->ptr, ICU_PTR(val), ICU_LEN(val));
+   cal = icu_date_parse(ICU_PTR(str), ICU_LEN(str), RSTRING_PTR(locale), ICU_PTR(val), ICU_LEN(val));
       ret = Data_Wrap_Struct(obj, 0, icu4r_cal_free, cal);
    return ret;
 }

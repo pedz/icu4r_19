@@ -55,7 +55,7 @@ VALUE icu_bundle_read(UResourceBundle * r)
 		break;
 
 	case URES_BINARY: 	
-		buf = ures_getBinary(r, &len, &status);
+		buf = (char *)ures_getBinary(r, &len, &status);
 		value = rb_str_new( buf, len);
 		break;
 		
@@ -115,8 +115,8 @@ VALUE icu_bundle_open(klass, package, locale)
      if( package != Qnil ) Check_Type(package, T_STRING);
      if( locale  != Qnil ) Check_Type(locale,  T_STRING);
      
-     r = ures_open (package == Qnil ? NULL : RSTRING(package)->ptr,
-     		    locale  == Qnil ? NULL : RSTRING(locale)->ptr, &status);
+     r = ures_open (package == Qnil ? NULL : RSTRING_PTR(package),
+     		    locale  == Qnil ? NULL : RSTRING_PTR(locale), &status);
      
      if (U_FAILURE(status) ) rb_raise(rb_eRuntimeError, u_errorName(status));
      return Data_Wrap_Struct(klass, 0, icu_free_bundle, r); 
@@ -142,8 +142,8 @@ VALUE icu_bundle_open_direct(klass, package, locale)
      if( package != Qnil ) Check_Type(package, T_STRING);
      if( locale  != Qnil ) Check_Type(locale, T_STRING);
      
-     r = ures_openDirect (package == Qnil ? NULL : RSTRING(package)->ptr,
-     		    locale  == Qnil ? NULL : RSTRING(locale)->ptr, &status);
+     r = ures_openDirect (package == Qnil ? NULL : RSTRING_PTR(package),
+     		    locale  == Qnil ? NULL : RSTRING_PTR(locale), &status);
      
      if (U_FAILURE(status) ) rb_raise(rb_eRuntimeError, u_errorName(status));
      return Data_Wrap_Struct(klass, 0, icu_free_bundle, r); 
@@ -187,7 +187,7 @@ VALUE icu_bundle_aref( argc, argv, bundle)
 	Check_Type(key, T_STRING);
 	orig = (UResourceBundle*)DATA_PTR(bundle);
 	
-	res = ures_getByKey(orig, RSTRING(key)->ptr, NULL, &status);
+	res = ures_getByKey(orig, RSTRING_PTR(key), NULL, &status);
 	if( U_FAILURE(status)) {
 		if( status == U_MISSING_RESOURCE_ERROR)	return Qnil;
 	 	rb_raise(rb_eArgError, u_errorName(status));

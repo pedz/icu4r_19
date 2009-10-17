@@ -552,7 +552,7 @@ icu_ustr_upcase_bang(argc, argv, str)
     if (rb_scan_args(argc, argv, "01", &loc) == 1) {
        if( loc != Qnil) {
          Check_Type(loc, T_STRING);
-	 locale = RSTRING(loc)->ptr;
+	 locale = RSTRING_PTR(loc);
        }
     }
 
@@ -619,7 +619,7 @@ icu_ustr_downcase_bang(argc, argv, str)
     if (rb_scan_args(argc, argv, "01", &loc) == 1) {
        if( loc != Qnil) {
          Check_Type(loc, T_STRING);
-	 locale = RSTRING(loc)->ptr;
+	 locale = RSTRING_PTR(loc);
        }
     }
     len = 
@@ -1140,7 +1140,7 @@ icu_ustr_each_mode(argc, argv, str, mode)
     char           *locale = "";
     if( rb_scan_args(argc, argv, "01", &loc) == 1) {
         Check_Type(loc, T_STRING);
-	locale = RSTRING(loc)->ptr;
+	locale = RSTRING_PTR(loc);
     }
     boundary =
 	ubrk_open(mode, locale, ICU_PTR(str), ICU_LEN(str),
@@ -1151,7 +1151,7 @@ icu_ustr_each_mode(argc, argv, str, mode)
     ++(USTRING(str)->busy);
     for (end = ubrk_next(boundary); end != UBRK_DONE; start = end, end = ubrk_next(boundary)) {
 	temp = icu_ustr_new(ICU_PTR(str) + start, end - start);
-	rb_rescue(rb_yield, temp, my_ubrk_close, &boundary);
+	rb_rescue(rb_yield, (VALUE)temp, my_ubrk_close, (VALUE)&boundary);
     }
     --(USTRING(str)->busy);
     ubrk_close(boundary);
@@ -1271,7 +1271,7 @@ icu_ustr_to_rstr(argc, argv, str)
     VALUE s;
     if (rb_scan_args(argc, argv, "01", &enc) == 1) {
 	Check_Type(enc, T_STRING);
-	encoding = RSTRING(enc)->ptr;
+	encoding = RSTRING_PTR(enc);
     }
     
     enclen = ICU_LEN(str) + 1;
@@ -1338,8 +1338,8 @@ icu_ustr_format(str, args)
     Check_Type(args, T_ARRAY);
     loc = rb_ary_shift(args);
     Check_Type(loc, T_STRING);
-    return icu_format(ICU_PTR(str), ICU_LEN(str), args, RARRAY(args)->len,
-		      RSTRING(loc)->ptr);
+    return icu_format(ICU_PTR(str), ICU_LEN(str), args, RARRAY_LEN(args),
+		      RSTRING_PTR(loc));
 }
 
 /* ------ UString regexp related functions ---- */
@@ -1540,7 +1540,7 @@ icu_ustr_char_span(int argc, VALUE * argv, VALUE str)
     }
     if( n > 2) {
     	Check_Type(locl, T_STRING);
-	loc = RSTRING(locl)->ptr;
+	loc = RSTRING_PTR(locl);
     }
     if(UNORM_YES != unorm_quickCheck(ICU_PTR(str), ICU_LEN(str), UNORM_NFC, &error) ) 
 	    str = icu_ustr_normalize_C(str);
@@ -1607,7 +1607,7 @@ icu_ustr_chars_m(argc, argv, str)
     VALUE           locale;
     if (rb_scan_args(argc, argv, "01", &locale) == 1) {
 	Check_Type(locale, T_STRING);
-	return icu_ustr_chars(str, RSTRING(locale)->ptr);
+	return icu_ustr_chars(str, RSTRING_PTR(locale));
     } else {
 	return icu_ustr_chars(str, "");
     }
@@ -1668,8 +1668,8 @@ icu_ustr_split_m(argc, argv, str)
 	}
     }
     if (NIL_P(limit) && lim == 0) {
-	while (RARRAY(result)->len > 0 &&
-	       ICU_LEN( (RARRAY(result)->ptr[RARRAY(result)->len - 1])) == 0)
+	while (RARRAY_LEN(result) > 0 &&
+	       ICU_LEN( (RARRAY_PTR(result)[RARRAY_LEN(result) - 1])) == 0)
 	    rb_ary_pop(result);
     }
 
@@ -2413,7 +2413,7 @@ icu_ustr_parse_double( int argc, VALUE * argv, VALUE str)
 	
 	if (n > 0) {
 		Check_Type(loc, T_STRING);
-		locale = RSTRING(loc)->ptr;
+		locale = RSTRING_PTR(loc);
 	} else locale = NULL;
 	
 	if( pattern != Qnil ) {
@@ -2462,7 +2462,7 @@ icu_ustr_coll(argc, argv, self)
 	if ( n == 3) {
 	   if( loc != Qnil) {
 		   Check_Type(loc, T_STRING);
-	   	   locale = RSTRING(loc)->ptr;
+	   	   locale = RSTRING_PTR(loc);
            }
 	}
 	Check_Class(str1, rb_cUString);
@@ -2609,7 +2609,7 @@ VALUE icu_ustr_search(argc, argv, str)
 	
 	if( locale != Qnil ) {
 	   Check_Type(locale, T_STRING);
-	   loc = RSTRING(locale) -> ptr;
+	   loc = RSTRING_PTR(locale);
 	}
 	limit = options == Qnil ? Qnil : rb_hash_aref(options, ID2SYM(rb_intern("limit")));
 	

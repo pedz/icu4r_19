@@ -86,7 +86,7 @@ VALUE icu4r_col_init(int argc, VALUE * argv, VALUE self)
 	  if( rb_scan_args(argc, argv, "01", &loc)) 
     {
 	     Check_Type(loc, T_STRING);
-       locale = RSTRING(loc)->ptr;
+       locale = RSTRING_PTR(loc);
     }
     col = ucol_open(locale,  &status);
     ICU_RAISE(status);
@@ -172,17 +172,17 @@ VALUE icu4r_col_strcoll(VALUE self, VALUE str1, VALUE str2)
 VALUE icu4r_col_sort_key(VALUE self, VALUE str)
 {
     int32_t needed , capa ;
-    char * buffer ; 
+    unsigned char * buffer ; 
     VALUE ret;
     Check_Class(str, rb_cUString);
     capa = ICU_LEN(str);
-    buffer = ALLOC_N(char, capa);
+    buffer = ALLOC_N(unsigned char, capa);
     needed = ucol_getSortKey(UCOLLATOR(self), ICU_PTR(str), ICU_LEN(str), buffer, capa);
     if(needed > capa){
-      REALLOC_N(buffer,char, needed);
+      REALLOC_N(buffer,unsigned char, needed);
       needed = ucol_getSortKey(UCOLLATOR(self), ICU_PTR(str), ICU_LEN(str), buffer, needed);
     }
-    ret = rb_str_new(buffer, needed);
+    ret = rb_str_new((char *)buffer, needed);
     free(buffer);
     return ret;
 }

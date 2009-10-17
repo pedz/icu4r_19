@@ -34,7 +34,7 @@ VALUE icu4r_cnv_init(VALUE self, VALUE name)
     UErrorCode status = U_ZERO_ERROR;
     
     Check_Type(name, T_STRING);
-    converter = ucnv_open(RSTRING(name)->ptr,  &status);
+    converter = ucnv_open(RSTRING_PTR(name),  &status);
     ICU_RAISE(status);
     DATA_PTR(self) = converter;
     return self;
@@ -85,7 +85,7 @@ VALUE icu4r_cnv_set_subst_chars(VALUE self, VALUE str)
 {
     UErrorCode status = U_ZERO_ERROR;
     Check_Type(str, T_STRING);
-    ucnv_setSubstChars(UCONVERTER(self), RSTRING(str)->ptr, RSTRING(str)->len, &status);
+    ucnv_setSubstChars(UCONVERTER(self), RSTRING_PTR(str), RSTRING_LEN(str), &status);
     ICU_RAISE(status);
     return Qnil;
 }
@@ -162,14 +162,14 @@ VALUE icu4r_cnv_to_unicode(VALUE self, VALUE str)
     VALUE s;
     UChar * buf;
     Check_Type(str, T_STRING);
-    capa = RSTRING(str)->len + 1;
+    capa = RSTRING_LEN(str) + 1;
     buf = ALLOC_N(UChar, capa);
-    len = ucnv_toUChars(conv, buf, capa-1, RSTRING(str)->ptr, RSTRING(str)->len, &status);
+    len = ucnv_toUChars(conv, buf, capa-1, RSTRING_PTR(str), RSTRING_LEN(str), &status);
     if (U_BUFFER_OVERFLOW_ERROR == status) {
 	      capa = len+1;
         REALLOC_N(buf, UChar, capa);
         status = 0;
-        len = ucnv_toUChars(conv, buf, capa-1, RSTRING(str)->ptr, RSTRING(str)->len, &status);
+        len = ucnv_toUChars(conv, buf, capa-1, RSTRING_PTR(str), RSTRING_LEN(str), &status);
         if (U_FAILURE(status)) {
           free(buf);
           rb_raise(rb_eArgError, u_errorName(status));
@@ -201,8 +201,8 @@ VALUE icu4r_cnv_convert_to(VALUE self, VALUE other, VALUE src)
    pivot=pivot2=pivotBuffer;
    cnv = UCONVERTER(self);
    other_cnv = UCONVERTER(other);
-   src_ptr = RSTRING(src)->ptr;
-   src_end = src_ptr + RSTRING(src)->len;
+   src_ptr = RSTRING_PTR(src);
+   src_end = src_ptr + RSTRING_LEN(src);
    ret = rb_str_new2("");
    ucnv_reset(other_cnv);
    ucnv_reset(cnv);
@@ -234,16 +234,16 @@ VALUE icu4r_cnv_convert(VALUE self, VALUE to_conv_name, VALUE from_conv_name, VA
      char * target = NULL;
      int32_t target_capa, len;
      VALUE ret;
-     target_capa = ucnv_convert( RSTRING(to_conv_name)->ptr, RSTRING(from_conv_name)->ptr,
+     target_capa = ucnv_convert( RSTRING_PTR(to_conv_name), RSTRING_PTR(from_conv_name),
                    target, 0,
-                   RSTRING(src)->ptr, RSTRING(src)->len, &status);
+                   RSTRING_PTR(src), RSTRING_LEN(src), &status);
      if(status == U_BUFFER_OVERFLOW_ERROR){
         status = U_ZERO_ERROR;
         target_capa += 1;
         target = ALLOC_N(char, target_capa);
-        len = ucnv_convert( RSTRING(to_conv_name)->ptr, RSTRING(from_conv_name)->ptr,
+        len = ucnv_convert( RSTRING_PTR(to_conv_name), RSTRING_PTR(from_conv_name),
                    target, target_capa,
-                   RSTRING(src)->ptr, RSTRING(src)->len, &status);
+                   RSTRING_PTR(src), RSTRING_LEN(src), &status);
         if(U_FAILURE(status)){           
           free(target);
           ICU_RAISE(status);
@@ -269,7 +269,7 @@ VALUE icu4r_cnv_standard_names(VALUE self, VALUE cnv_name, VALUE std_name)
 	int32_t len;
   Check_Type(cnv_name, T_STRING);
   Check_Type(std_name, T_STRING);
-	name_list = ucnv_openStandardNames(RSTRING(cnv_name)->ptr, RSTRING(std_name)->ptr, &status);
+	name_list = ucnv_openStandardNames(RSTRING_PTR(cnv_name), RSTRING_PTR(std_name), &status);
 	ICU_RAISE(status);
 	ret = rb_ary_new();
 	while( (name = (char*)uenum_next(name_list, &len, &status))) {

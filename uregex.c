@@ -608,7 +608,7 @@ icu_umatch_size(match)
      VALUE           match;
 {
     VALUE           cg = rb_iv_get(match, "@cg");
-    return LONG2NUM(RARRAY(cg)->len - 1);
+    return LONG2NUM(RARRAY_LEN(cg) - 1);
 }
 
 
