@@ -138,7 +138,7 @@ There are some differences between processing in Ruby Regexp and URegexp:
 3. ICU Home Page http://icu.sf.net 
 4. Unicode Home Page http://www.unicode.org
 
-==== BUGS, DOCS, TODO
+==== BUGS, DOCS, TO DO
 
 The code is slow and inefficient yet, is still highly experimental, 
 so can have many security and memory leaks, bugs, inconsistent 
