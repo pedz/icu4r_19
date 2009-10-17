@@ -1,0 +1,87 @@
+25-May-2006
+	* ustring.c: preventing memory leaks when exception is thrown from block in UString#each_* methods
+
+	* fmt.cpp: preventing memory leaks when message can't be formatted (UString#fmt) or date parsed 
+	
+20-May-2006
+	* collator.c: a little docs added
+	
+	* ustring.c, uregex.c: fixes in split(), UString#[regexp, index] now allows negative indices
+
+	* test/test_ustring.rb: more tests
+	
+27-Apr-2006
+	* collator.c: added UCollator class
+	
+	* converter.c: added UConverter class
+	
+24-Apr-2006
+	* UString: added eql? method (fixes usage of UString as Hash key); fixed sentinel bug in normalize 
+
+	* test/test_calendar: removing some dependencies from ICU content and user locale in  test_default and test_time_zones (by report of Daigo Moriwaki)
+	
+02-Feb-2006
+	* UString: moved parse_date to UCalendar.parse
+	
+	* UResourceBundle: aref can accept additional parameter and return actual locale
+
+	* UCalendar: simplified formmating options
+
+26-Jan-2006
+	* UString: sub, gsub, scan, each_* now set "busy" flag before calling block, thus preventing scanned string to be modfied inside block
+
+	* ustring.c: fixed? bug with sentinels, also Array#to_u, and fixed again
+	
+25-Jan-2006
+	* UString: addde foldcase method
+
+	* UString: added char_span(start,[len, locale]) method.
+
+	* ustring.c: fixed bug with incorrect sentinel set in splice_units
+	
+24-Jan-2006:
+	* split source code to: uregex.c, ubundle.c, ucore_ext.c
+
+	* changed main lib name: icu4r.c
+
+23-Jan-2006:
+	* UCalendar: added <, ==, >, clone, equal? methods
+
+	* UResourceBundle: throw an exception on clone
+	
+22-Jan-2006
+	* added tests for UCalendar
+	
+	* calendar.c: UCalendar services added
+	
+21-Jan-2006
+	* UString#to_s: removed NFC before conversion
+
+	* fmt.cpp: extern problem bugfix(?)
+	
+20-Jan-2006:
+	* UString: strictly sticking with code unit ranges, cleanup
+
+	* Array#to_u: replace invalid chars with U+FFFD
+	
+19-Jan-2006 
+	* UString#chars: added NFC before split
+
+	* UString#to_s: added NFC before conversion
+
+	* UString#normalize: added quick checks before normalization
+	
+	* UString#split: removed split(//) support
+	
+	* UString: fixed bugs with ranges: slice, conv_unit_range, conv_point_range
+	
+	* UString: added unescape method
+
+	* UString: cleanup initializations - now uniform icu_ustr_alloc_and_wrap
+
+	* UString#sub!: now calls gsub
+	
+	* UResourceBundle:  added open_direct
+	
+18-Jan-2006  
+	* initial release 0.1.0
