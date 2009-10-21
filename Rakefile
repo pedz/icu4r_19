@@ -10,7 +10,7 @@ spec = Gem::Specification.new do |s|
   s.email = "pedz@easesoftware.com"
   s.homepage = "http://icu4r.rubyforge.org/"
   s.platform = Gem::Platform::RUBY
-  s.required_ruby_version = '>=1.9'
+  s.required_ruby_version = '>=1.8'
   s.files = Dir['**/**']
   s.has_rdoc = true
 end
