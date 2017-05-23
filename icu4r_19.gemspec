@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
   s.has_rdoc = true
   s.homepage = "http://icu4r.rubyforge.org/"
-  s.name = "icu4r"
+  s.name = "icu4r_19"
   s.platform = Gem::Platform::RUBY
   s.rdoc_options = [ '-c', 'utf-8', '-x', 'dummy' ]
   s.required_ruby_version = '>=1.8'
